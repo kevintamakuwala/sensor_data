@@ -22,7 +22,7 @@ This project demonstrates a distributed system for real-time sensor data monitor
 
 - **Backend:** Spring Boot, WebSocket, Hibernate
 
-- **Database:** MongoDB
+- **Database:** MySQL
 - **Messaging:** STOMP over WebSocket
 - **Client:** Java console application
 - **Containerization:** Docker, Docker Compose
@@ -63,21 +63,14 @@ git clone https://github.com/mihirh19/sensor_data
 cd sensor_data
 ```
 
-### **Step 2: Configure Environment Variables**
 
-Create a .env file in the root directory with the following:
-
-```.env
-MONGO_URI=mongodb://mongo:27017/sensorDB
-```
-
-### **Step 3: Build the Docker Images**
+### **Step 2: Build the Docker Images**
 
 ```bash
 docker-compose build
 ```
 
-### **Step 4: Start the Application**
+### **Step 3: Start the Application**
 
 ```bash
 docker-compose up
@@ -85,15 +78,13 @@ docker-compose up
 
 This starts the following services:
 
-- sensor-server on port 8081
+- sensor-server on port 8080
 - sensor-client (three instances simulating sensor nodes)
-- MongoDB on port 27017
+- MySQLK on port 3306
 
 ### **Step 5: Verify the Setup**
 
-- WebSocket Server: Connect to ws://localhost:8080/sensor-updates using a WebSocket client like Postman or wscat.
-
-- MongoDB Database: Access sensorDB using a MongoDB client like MongoDB Compass
+- WebSocket Server: Connect to ws://localhost:8080/sensors using a WebSocket client like Postman or wscat.
 
 ## Author
 
