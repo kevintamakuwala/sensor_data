@@ -3,6 +3,8 @@ package org.example;
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
@@ -50,7 +52,6 @@ public class SensorClient {
                 public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
                     System.out.println("Connected! Session Id: " + session.getSessionId());
 
-                    // Subscribe to updates
                     session.subscribe("/topic/sensor-updates", new StompFrameHandler() {
                         @Override
                         public Type getPayloadType(StompHeaders headers) {
@@ -116,18 +117,29 @@ public class SensorClient {
     }
 
     public static void main(String[] args) {
-        try {
-            Scanner scanner = new Scanner(System.in);
+        Map<SensorClient, Thread> clientThreads = new HashMap<>();
+        Scanner scanner = new Scanner(System.in);
 
+        try {
             System.out.print("Enter the number of clients: ");
             int numberOfClients = Integer.parseInt(scanner.nextLine());
 
-            SensorClient[] clients = new SensorClient[numberOfClients];
             for (int i = 0; i < numberOfClients; i++) {
                 System.out.print("Enter node ID for client " + (i + 1) + ": ");
                 String nodeId = scanner.nextLine();
-                clients[i] = new SensorClient(nodeId);
-                clients[i].connect();
+
+                SensorClient client = new SensorClient(nodeId);
+                Thread clientThread = new Thread(() -> {
+                    try {
+                        client.connect();
+                    } catch (Exception e) {
+                        System.err.println("Error connecting client: " + nodeId);
+                        e.printStackTrace();
+                    }
+                });
+
+                clientThreads.put(client, clientThread);
+                clientThread.start();
             }
 
             while (true) {
@@ -142,29 +154,42 @@ public class SensorClient {
                     case "1":
                         System.out.print("Enter the client number to send data: ");
                         int sendClientIndex = Integer.parseInt(scanner.nextLine()) - 1;
-                        clients[sendClientIndex].sendData();
+                        SensorClient sendClient = getClientByIndex(clientThreads, sendClientIndex);
+                        if (sendClient != null) {
+                            sendClient.sendData();
+                        }
                         break;
 
                     case "2":
                         System.out.print("Enter the client number to request data: ");
                         int requestClientIndex = Integer.parseInt(scanner.nextLine()) - 1;
-                        clients[requestClientIndex].requestData();
-
+                        SensorClient requestClient = getClientByIndex(clientThreads, requestClientIndex);
+                        if (requestClient != null) {
+                            requestClient.requestData();
+                        }
                         break;
 
                     case "3":
                         System.out.println("Exiting...");
                         scanner.close();
+                        clientThreads.values().forEach(Thread::interrupt);
                         return;
 
                     default:
                         System.out.println("Invalid choice. Please try again.");
                 }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static SensorClient getClientByIndex(Map<SensorClient, Thread> clientThreads, int index) {
+        if (index < 0 || index >= clientThreads.size()) {
+            System.err.println("Invalid client index.");
+            return null;
+        }
+        return clientThreads.keySet().toArray(new SensorClient[0])[index];
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
