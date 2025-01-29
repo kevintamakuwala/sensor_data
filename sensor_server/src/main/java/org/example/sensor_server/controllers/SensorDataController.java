@@ -8,6 +8,7 @@ import org.example.sensor_server.services.SensorService;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -23,6 +24,7 @@ public class SensorDataController {
         this.template = template;
     }
 
+    @Async
     @MessageMapping("/data")
     @SendTo("/topic/sensor-updates")
     public Sensor receiveSensorData(SensorDataRequest data) {
@@ -30,11 +32,11 @@ public class SensorDataController {
         return sensorService.saveSensorData(data);
     }
 
+    @Async
     @MessageMapping("/request")
     @SendTo("/topic/requests/")
     public void requestSensorData(String nodeId) {
         logger.info("\n\nRequesting data from node: " + nodeId + "\n\n");
-
         template.convertAndSendToUser(nodeId, "/queue/request", "Server requesting data from node: " + nodeId);
     }
 }
