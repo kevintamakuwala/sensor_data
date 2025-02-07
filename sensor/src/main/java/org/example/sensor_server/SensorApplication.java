@@ -10,10 +10,10 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 
 @SpringBootApplication
 @EnableWebSocketMessageBroker
-public class SensorServerApplication {
+public class SensorApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(SensorServerApplication.class, args);
+        SpringApplication.run(SensorApplication.class, args);
     }
 
     @Bean

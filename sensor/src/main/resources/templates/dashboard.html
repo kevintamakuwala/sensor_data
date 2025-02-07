@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Sensor Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-6 text-center text-blue-600">Sensor Dashboard</h1>
+
+    <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="clientId">Client ID</label>
+            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   id="clientId" type="text">
+        </div>
+
+        <div class="flex gap-4 mb-4">
+            <button id="connectButton"
+                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                Connect
+            </button>
+            <button id="disconnectButton"
+                    class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline hidden">
+                Disconnect
+            </button>
+        </div>
+
+        <div id="controlPanel" class="hidden space-y-4">
+            <div class="flex gap-4">
+                <button id="startPeriodicButton"
+                        class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                    Start Periodic Data
+                </button>
+                <button id="stopPeriodicButton"
+                        class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline hidden">
+                    Stop Periodic Data
+                </button>
+            </div>
+
+            <div class="space-y-2">
+                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                       id="nodeIdInput" type="text" placeholder="Enter Node ID">
+                <button id="requestDataButton"
+                        class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                    Request Data
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white shadow-md rounded px-8 pt-6 pb-8">
+        <h2 class="text-xl font-bold mb-4">Sensor Data</h2>
+        <div id="sensorData" class="space-y-4"></div>
+    </div>
+</div>
+
+<script th:src="@{/js/sensorClient.js}"></script>
+<script th:src="@{/js/uiManager.js}"></script>
+</body>
+</html>
